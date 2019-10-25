@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ValleCreateDlg" widgetVar="ValleCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{vistas.CreateValleTitle}">
+            <h:form id="ValleCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{valleController.selected != null}">
+                        <p:outputLabel value="#{vistas.CreateValleLabel_idvall}" for="idvall" />
+                        <p:inputText id="idvall" value="#{valleController.selected.idvall}" title="#{vistas.CreateValleTitle_idvall}" required="true" requiredMessage="#{vistas.CreateValleRequiredMessage_idvall}"/>
+                        <p:outputLabel value="#{vistas.CreateValleLabel_nomvall}" for="nomvall" />
+                        <p:inputText id="nomvall" value="#{valleController.selected.nomvall}" title="#{vistas.CreateValleTitle_nomvall}" required="true" requiredMessage="#{vistas.CreateValleRequiredMessage_nomvall}"/>
+                        <p:outputLabel value="#{vistas.CreateValleLabel_estavall}" for="estavall" />
+                        <p:inputText id="estavall" value="#{valleController.selected.estavall}" title="#{vistas.CreateValleTitle_estavall}" required="true" requiredMessage="#{vistas.CreateValleRequiredMessage_estavall}"/>
+                        <p:outputLabel value="#{vistas.CreateValleLabel_idagen}" for="idagen" />
+                        <p:selectOneMenu id="idagen" value="#{valleController.selected.idagen}" required="true" requiredMessage="#{vistas.EditValleRequiredMessage_idagen}">
+                            <f:selectItems value="#{agenciaController.itemsAvailableSelectOne}"
+                                           var="idagenItem"
+                                           itemValue="#{idagenItem}"/>
+                        </p:selectOneMenu>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{valleController.create}" value="#{vistas.Save}" update="display,:ValleListForm:datalist,:growl" oncomplete="handleSubmit(args,'ValleCreateDialog');"/>
+                    <p:commandButton value="#{vistas.Cancel}" onclick="ValleCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

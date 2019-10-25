@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" >
+
+    <h:head>
+        <title>Lima Sur – Iniciar Sesión</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+        <!--Script Propios-->
+        <h:outputScript library="js" name="all.js"/>
+
+        <h:outputStylesheet library="css"  name="IconFontsMaterialize.css"/>
+        <h:outputStylesheet library="css"  name="style.css"/>
+        <h:outputScript library="js" name="jsfcrud.js" />
+        <!--***-->
+        <!--CSS and JS - Van en esta Posicion para que funcione bien-->
+        <h:outputStylesheet library="css"  name="fontawesome-all.css"/>
+        <h:outputStylesheet library="css"  name="components.css"/>
+        <h:outputStylesheet library="css"  name="layout-dark-green.css"/>
+        <h:outputStylesheet library="css"  name="theme-dark-green.css"/>
+
+        <!--Estilos propios-->
+        <h:outputStylesheet library="css"  name="estilos.css"/>
+        <h:outputScript library="js" name="components.js" />
+        <h:outputScript library="js" name="layout.js" />
+        <!-- web font -->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css"/>
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css"/>
+
+        <!-- //web font -->
+    </h:head>
+    <body>
+        <!-- main -->
+    <p:growl showDetail="true" id="message"/>
+    <h:form id="ass">
+        <div class="card login-panel ui-fluid">
+            <div class="ui-g">
+
+                <div class="ui-g-12"> 
+                    <h:graphicImage library="icon" name="Ultima/Bandera_Region_Lima.png"/>
+                </div>
+                <div class="ui-g-12">
+                    <div class="ui-inputgroup">
+                        <span class="ui-inputgroup-addon"><i class="material-icons">account_circle</i></span>
+
+                        <h:panelGroup styleClass="md-inputfield">
+                            <p:inputText id="USERNAME" value="#{loginC.user}" required="true" requiredMessage="Usuario vacio"/>
+                            <p:outputLabel for="USERNAME" value="Username"/>
+                        </h:panelGroup>
+                    </div>
+                </div>
+                <div class="ui-g-12">
+                    <div class="ui-inputgroup">
+                        <span class="ui-inputgroup-addon"><i class="material-icons">lock_outline</i></span>
+                        <h:panelGroup styleClass="md-inputfield">
+                            <p:password value="#{loginC.pass}" required="true" requiredMessage="Contraseña vacia"/>
+                            <label>Password</label>
+                        </h:panelGroup>
+                    </div>
+                </div>
+                <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+
+                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                    <p:graphicImage name="/images/caracol.gif"  style="display:block;height:300px;"/>
+                </p:dialog>
+                <style>
+                    .ui-dialog.ui-widget-content {
+                        background-image: none;
+                        background-color: transparent;
+                        border-color: transparent;
+                    }
+                </style>
+                <div class="ui-g-12">
+                    <p:commandButton id="btnlogin" actionListener="#{loginC.session()}" value="INICIAR SESIÓN" update="ass :message"/>
+                </div>
+                <div class="ui-g-12">
+                    Crop Web V.4
+                </div>
+
+            </div>
+        </div>
+    </h:form>
+</body>
+</html>

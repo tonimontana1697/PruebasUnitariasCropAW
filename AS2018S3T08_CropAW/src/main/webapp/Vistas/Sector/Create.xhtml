@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="Sector_1CreateDlg" widgetVar="Sector_1CreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{vistas.CreateSector_1Title}" closable="false" responsive="true" dynamic="true">
+            <h:form id="Sector_1CreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{sectorController.selected != null}">
+                        <p:outputLabel value="#{vistas.CreateSector_1Label_nomsect}" for="nomsect" />
+                        <p:inputText id="nomsect" validator="#{V_Sector.validate}" onkeyup="capitalize(this)" value="#{sectorController.selected.NOMSECT}" title="#{vistas.CreateSector_1Title_nomsect}" required="true" requiredMessage="#{vistas.CreateSector_1RequiredMessage_nomsect}">
+                            <p:ajax update=":growl" event="blur" />
+                        </p:inputText>
+                        <p:outputLabel value="#{vistas.CreateSector_1Label_areasect}" for="areasect" />
+                        <p:spinner id="areasect" value="#{sectorController.selected.AREASECT}" title="#{vistas.CreateSector_1Title_areasect}" required="true" requiredMessage="#{vistas.CreateSector_1RequiredMessage_areasect}" min="0" max="99999.99" stepFactor="0.25"/>
+                        <p:outputLabel value="#{vistas.CreateSector_1Label_estsect}" for="estsect" />
+                        <p:selectOneRadio unselectable="true" id="estsect" value="#{sectorController.selected.ESTSECT}" required="true" requiredMessage="#{vistas.CreateSector_1RequiredMessage_estsect}">
+                            <f:selectItem itemLabel="Activo" itemValue="A"/>
+                            <f:selectItem itemLabel="Inactivo" itemValue="I"/>
+                        </p:selectOneRadio>                    
+                        <p:outputLabel value="#{vistas.CreateSector_1Label_codubi}" for="codubi" />
+                        <p:autoComplete id="codubi" value="#{sectorController.selected.CODUBI}" completeMethod="#{ubigeoController.complete}"
+                                        required="true" requiredMessage="#{vistas.EditSector_1RequiredMessage_codubi}"
+                                        var="ubigeo" itemLabel="#{ubigeo.NOMDIST}" itemValue="#{ubigeo}" forceSelection="true">
+                        <p:keyFilter regEx="/[a-z- ]/i"/>
+                        </p:autoComplete>
+
+                        <p:outputLabel value="#{vistas.CreateSector_1Label_idvall}" for="idvall" />
+                        <p:selectOneMenu id="idvall" value="#{sectorController.selected.IDVALL}" required="true" requiredMessage="#{vistas.EditSector_1RequiredMessage_idvall}">
+                            <f:selectItems value="#{valleController.items}"
+                                           var="idvallItem"
+                                           itemValue="#{idvallItem}" itemLabel="#{idvallItem.nomvall}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="#{vistas.CreateSector_1Label_estasect}" for="estasect" />
+                        <p:selectOneRadio unselectable="true" id="estacul" value="#{sectorController.selected.ESTSECT}" required="true" requiredMessage="Se requiere un estado">
+                            <f:selectItem itemLabel="Activo" itemValue="A"/>
+                            <f:selectItem itemLabel="Inactivo" itemValue="I"/>
+                        </p:selectOneRadio>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{sectorController.create}" value="#{vistas.Save}" update="display,:Sector_1ListForm:datalist,:growl" oncomplete="handleSubmit(args,'Sector_1CreateDialog');"/>
+                    <p:commandButton value="#{vistas.Cancel}" update="display" process="@this" oncomplete="PF('Sector_1CreateDialog').hide()" resetValues="true"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

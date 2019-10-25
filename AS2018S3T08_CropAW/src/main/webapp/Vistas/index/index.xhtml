@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"  xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <h:body>
+
+        <ui:composition template="../Template/Template.xhtml">
+
+            <ui:define name="content">
+                <h:form>    
+
+                    <ui:repeat value="#{graficosC.contar}" var="contar" >
+                        <div class="ui-g dashboard">
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="ui-g card colorbox colorbox-1">
+                                    <div class="ui-g-4">
+                                        <i class="ui-icon ui-icon-nature"/>
+                                    </div>
+                                    <div class="ui-g-8">
+                                        <span class="colorbox-name">Cultivo</span>
+                                        <span class="colorbox-count">#{contar.CULTIVO}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="ui-g card colorbox colorbox-2">
+                                    <div class="ui-g-4">
+                                        <i class="ui-icon ui-icon-person"></i>
+                                    </div>
+                                    <div class="ui-g-8">
+                                        <span class="colorbox-name">Personal</span>
+                                        <span class="colorbox-count">#{contar.PERSONA}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="ui-g-12 ui-md-6 ui-lg-3">
+                                <div class="ui-g card colorbox colorbox-3">
+                                    <div class="ui-g-4">
+                                        <i class="ui-icon ui-icon-location-on"></i>
+                                    </div>
+                                    <div class="ui-g-8">
+                                        <span class="colorbox-name">Sector</span>
+                                        <span class="colorbox-count">#{contar.SECTOR}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ui:repeat>
+                    <br/>
+                    <br/>
+                    <f:event type="preRenderView" listener="#{graficosC.lista()}"/>
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                        <h:panelGroup>
+                            <center> <h:outputText value="Porcentaje de cultivos"/> </center>
+                            <p:pieChart model="#{graficosC.pieModel}" rendered="#{graficosC.pieModel != null}"/>
+                            <br/>
+                            <p:commandButton  ajax="false" actionListener="#{reportC.reportgraf()}" value="Exportar a PDF"
+                                              style="margin-right:20px;" styleClass="ui-priority-primary" />
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <center> <h:outputText value="Cantidad de cosecha por Hectárea"/> </center>
+                            <p:lineChart model="#{graficosC.lineModel}"/>
+                            <br/>
+                            <p:commandButton  ajax="false" actionListener="#{reportC.reportgraf2()}" value="Exportar a PDF"
+                                              style="margin-right:20px;" styleClass="ui-priority-primary" />
+                        </h:panelGroup>
+                        
+                        <h:panelGroup>
+                            <center> <h:outputText value="Cantidad de cosecha"/> </center>
+                            <p:barChart model="#{graficosC.hbarModel}"/>
+                            <br/>
+                            <p:commandButton  ajax="false" actionListener="#{reportC.reportgraf3()}" value="Exportar a PDF"
+                                              style="margin-right:20px;" styleClass="ui-priority-primary" />
+                        </h:panelGroup>
+
+                    </p:panelGrid>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+
+    </h:body>
+</html>

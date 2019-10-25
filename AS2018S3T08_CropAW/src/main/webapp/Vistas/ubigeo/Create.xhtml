@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="UbigeoCreateDlg" widgetVar="UbigeoCreateDialog" modal="true" resizable="false" appendTo="@(body)" header="#{vistas.CreateUbigeoTitle}">
+            <h:form id="UbigeoCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{ubigeoController.selected != null}">
+                        <p:outputLabel value="#{vistas.CreateUbigeoLabel_codubi}" for="codubi" />
+                        <p:inputText id="codubi" value="#{ubigeoController.selected.codubi}" title="#{vistas.CreateUbigeoTitle_codubi}" required="true" requiredMessage="#{vistas.CreateUbigeoRequiredMessage_codubi}"/>
+                        <p:outputLabel value="#{vistas.CreateUbigeoLabel_nomdep}" for="nomdep" />
+                        <p:inputText id="nomdep" value="#{ubigeoController.selected.nomdep}" title="#{vistas.CreateUbigeoTitle_nomdep}" required="true" requiredMessage="#{vistas.CreateUbigeoRequiredMessage_nomdep}"/>
+                        <p:outputLabel value="#{vistas.CreateUbigeoLabel_nomprov}" for="nomprov" />
+                        <p:inputText id="nomprov" value="#{ubigeoController.selected.nomprov}" title="#{vistas.CreateUbigeoTitle_nomprov}" required="true" requiredMessage="#{vistas.CreateUbigeoRequiredMessage_nomprov}"/>
+                        <p:outputLabel value="#{vistas.CreateUbigeoLabel_nomdist}" for="nomdist" />
+                        <p:inputText id="nomdist" value="#{ubigeoController.selected.nomdist}" title="#{vistas.CreateUbigeoTitle_nomdist}" required="true" requiredMessage="#{vistas.CreateUbigeoRequiredMessage_nomdist}"/>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{ubigeoController.create}" value="#{vistas.Save}" update="display,:UbigeoListForm:datalist,:growl" oncomplete="handleSubmit(args,'UbigeoCreateDialog');"/>
+                    <p:commandButton value="#{vistas.Cancel}" onclick="UbigeoCreateDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

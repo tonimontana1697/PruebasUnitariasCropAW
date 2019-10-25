@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="Sector_1ViewDlg" widgetVar="Sector_1ViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{vistas.ViewSector_1Title}" closable="false" responsive="true">
+            <h:form id="Sector_1ViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{sectorController.selected != null}">
+                        <h:outputText value="#{vistas.ViewSector_1Label_nomsect}"/>
+                        <h:outputText value="#{sectorController.selected.NOMSECT}" title="#{vistas.ViewSector_1Title_nomsect}"/>
+                        <h:outputText value="#{vistas.ViewSector_1Label_areasect}"/>
+                        <h:outputText value="#{sectorController.selected.AREASECT}" title="#{vistas.ViewSector_1Title_areasect}"/>
+                        <h:outputText value="#{vistas.ViewSector_1Label_estsect}"/>
+                        <h:outputText value="#{sectorController.selected.ESTSECT}" title="#{vistas.ViewSector_1Title_estsect}">
+                            <f:converter converterId="C_Estado" />
+                        </h:outputText>
+                        <h:outputText value="#{vistas.ViewSector_1Label_codubi}"/>
+                        <h:outputText value="#{sectorController.selected.CODUBI.NOMDIST}" title="#{vistas.ViewSector_1Title_codubi}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{vistas.Close}" oncomplete="PF('Sector_1ViewDialog').hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

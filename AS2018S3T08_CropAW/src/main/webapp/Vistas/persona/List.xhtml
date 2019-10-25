@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:composition template="/Vistas/Template/Template.xhtml">
+
+
+        <ui:define name="title">
+            <h:outputText value="#{vistas.ListPersonaTitle}"></h:outputText>
+        </ui:define>
+
+        <ui:define name="content">
+            <h:form id="PersonaListForm">
+                <p:panel header="#{vistas.ListPersonaTitle}">
+                    <p:dataTable id="datalist" value="#{personaController.items}" var="item"
+                                 selectionMode="single" selection="#{personaController.selected}"
+                                 paginator="true"
+                                 rowKey="#{item.IDPER}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50"
+                                 reflow="true"
+                                 widgetVar="wddatalist">
+                        <p:column filterBy="#{item.NOMPER}" sortBy="#{item.NOMPER}">
+                            <f:facet name="header">
+                                <h:outputText value="#{vistas.ListPersonaTitle_nomper}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.NOMPER}"/>
+                        </p:column>
+                        <p:column filterBy="#{item.APEPER}" sortBy="#{item.APEPER}">
+                            <f:facet name="header">
+                                <h:outputText value="#{vistas.ListPersonaTitle_apeper}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.APEPER}"/>
+                        </p:column>
+                        <p:column filterBy="#{item.DNIPER}">
+                            <f:facet name="header" >
+                                <h:outputText value="#{vistas.ListPersonaTitle_dniper}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.DNIPER}"/>
+                        </p:column>
+                        <p:column filterBy="#{item.TELPER}">
+                            <f:facet name="header">
+                                <h:outputText value="#{vistas.ListPersonaTitle_telper}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.TELPER}"/>
+                        </p:column>
+                        <p:column filterBy="#{item.TIPPER}" headerText="#{vistas.ListPersonaTitle_tipper}">
+                            <f:facet name="filter">
+                                <p:selectOneButton onchange="PF('wddatalist').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="Admin" itemValue="A" />
+                                    <f:selectItem itemLabel="User" itemValue="U" />
+                                </p:selectOneButton>
+                            </f:facet>
+                            <h:outputText value="#{item.TIPPER}">
+                                <f:converter converterId="C_TipoUsuario" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column filterBy="#{item.ESTAPER}" headerText="#{vistas.ListPersonaTitle_estaper}" width="90">
+                            <f:facet name="filter">
+                                <p:selectOneButton onchange="PF('wddatalist').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="A" itemValue="A" />
+                                    <f:selectItem itemLabel="I" itemValue="I" />
+                                </p:selectOneButton>    
+                            </f:facet>
+                            <center>
+                                <h:outputText value="#{item.ESTAPER}">
+                                    <f:converter converterId="C_Estado"/>
+                                </h:outputText>
+                            </center>
+                        </p:column>
+
+                        <f:facet name="header">
+                            <p:commandButton  id="createButton" icon="ui-icon-plus"   value="#{vistas.Create}" actionListener="#{personaController.prepareCreate}" update=":PersonaCreateForm" oncomplete="PF('PersonaCreateDialog').show()"/>
+                            <p:commandButton  ajax="false" actionListener="#{reportC.reportpersonal()}" value="Exportar a PDF"/>
+                        </f:facet>
+                    </p:dataTable>
+                    <p:contextMenu for="datalist">
+                        <p:menuitem id="viewButton"   icon="ui-icon-search" value="#{vistas.View}" update=":PersonaViewForm" oncomplete="PF('PersonaViewDialog').show()"/>
+                        <p:menuitem id="editButton"   icon="ui-icon-pencil" value="#{vistas.Edit}" update=":PersonaEditForm" oncomplete="PF('PersonaEditDialog').show()"/>
+                        <p:menuitem id="editCredentialsButton" icon="ui-icon-pencil" value="#{vistas.EditCredentials}" update=":PersonaEditCredentialsForm" oncomplete="PF('PersonaEditCredentialsDialog').show()"/>
+                        <p:menuitem id="deleteButton" icon="ui-icon-trash"  value="#{vistas.Delete}" actionListener="#{personaController.destroy}" update=":growl,datalist">
+                            <p:confirm header="¿Seguro que seas eliminar?" message="#{vistas.PersonaDeletedConfirm}" icon="fa fa-exclamation-triangle"/>
+                        </p:menuitem>
+                    </p:contextMenu>
+                </p:panel>
+            </h:form>
+
+            <ui:include src="Create.xhtml"/>
+            <ui:include src="Edit.xhtml"/>
+            <ui:include src="EditCredentials.xhtml"/>
+            <ui:include src="View.xhtml"/>
+        </ui:define>
+    </ui:composition>
+
+</html>

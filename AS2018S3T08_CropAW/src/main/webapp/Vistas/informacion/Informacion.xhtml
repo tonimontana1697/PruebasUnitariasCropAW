@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml"
+       xmlns:h="http://java.sun.com/jsf/html"
+       xmlns:f="http://java.sun.com/jsf/core"
+       xmlns:ui="http://java.sun.com/jsf/facelets"
+       xmlns:p="http://primefaces.org/ui"
+       xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+
+    <h:head>
+        <title>Informacion</title>
+    </h:head>
+    <body>
+
+        <ui:composition template="/Vistas/Template/Template.xhtml">
+            <ui:define name="content">
+
+                <style type="text/css">
+                    .value {
+                        font-weight: bold;
+                    }
+                </style>
+                <div class="contentTitle" style="text-align: center">
+                    <span class="titleVistas">Información</span>
+                </div>
+
+                <p:dialog id="dlgPickList" widgetVar="dlgwPickList" 
+                          dynamic="true" responsive="true" 
+                          closable="false" modal="true"
+                          showEffect="blind" resizable="false" 
+                          draggable="false" 
+                          >
+                    <h:form>
+                        <p:pickList id="PickList" value="#{informacionC.asignaciones}" var="asignacion"
+                                    itemValue="#{asignacion}" itemLabel="#{asignacion.SECTOR}" 
+                                    showCheckbox="true"
+                                    showSourceFilter="true" showTargetFilter="true" 
+                                    filterMatchMode="contains" 
+                                    converter="entityConverter" 
+                                    responsive="true">
+
+                            <f:facet name="sourceCaption">Seleccionar</f:facet>
+                            <f:facet name="targetCaption">Enviar</f:facet>
+                            <p:column style="width:85%;">
+                                <h:outputText value="#{asignacion.SECTOR}" />
+                            </p:column>
+                        </p:pickList>                 
+                        <p:commandButton id="pojoSubmit" 
+                                         value="Generar"
+                                         update=":flInformacion PickList"
+                                         style="margin-top:5px"
+                                         ajax="true"
+                                         action="#{informacionC.generar()}" 
+                                         onclick="PF('pbAjax').start();PF('startButton2').disable();"   
+                                         widgetVar="startButton2" />  
+                        <p:commandButton  value="Cancelar" immediate="true" update=":flInformacion:dtTableInformacion dlgPickList @this" 
+                                          process="@this" oncomplete="PF('dlgwPickList').hide()">
+                            <p:resetInput target="dlgPickList" />
+                        </p:commandButton>
+                        <p:spacer height="10" />
+                        <p:separator/>
+                        <p:progressBar widgetVar="pbAjax" 
+                                       ajax="true" 
+                                       value="#{informacionC.progress}" 
+                                       labelTemplate="{value}%" 
+                                       styleClass="animated" 
+                                       global="false">
+                            <p:ajax event="complete" 
+                                    listener="#{informacionC.onComplete}" 
+                                    oncomplete="PF('startButton2').enable(); PF('dlgwPickList').hide()"
+                                    update=":flInformacion"/>
+                        </p:progressBar>
+                    </h:form>
+                </p:dialog>
+                <p:spacer height="10" />
+                <h:form id="informacionPanel">
+                    <div class="ui-fluid">
+                        <p:panelGrid columns="4" columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid">
+
+                            <p:outputLabel for="month" value="Selecione mes:" />
+                            <p:datePicker id="month" 
+                                          view="month" 
+                                          value="#{informacionC.fechaAtual}" 
+                                          pattern="MM/yyyy" 
+                                          yearNavigator="true"
+                                          yearRange="#{informacionC.listaAnios.get(0)}:#{informacionC.listaAnios.get(informacionC.listaAnios.size()-1)}"/>
+
+                            <p:commandButton id="filtro"
+                                             value="Filtrar" 
+                                             actionListener="#{informacionC.filtro()}"
+                                             oncomplete="PF('ListaTbInformacion').filter()"
+                                             update=":flInformacion"/>
+                            <p:commandButton  id="reporte"
+                                              ajax="false" 
+                                              actionListener="#{informacionC.reporteMes()}" 
+                                              value="Reporte"/>
+                            <p:commandButton  id="dialogo"
+                                              ajax="true" 
+                                              actionListener="#{informacionC.listAsignaciones()}"
+                                              oncomplete="PF('dlgwPickList').show()"
+                                              value="Enviar registros"/>
+                            <p:selectOneMenu value="#{informacionC.informacionM.CODUBI}">
+                                <f:selectItems value="#{informacionC.listaDistrito}" 
+                                               var="dist" 
+                                               itemValue="#{dist.CODUBI}"
+                                               itemLabel="#{dist.NOMDIST}"/>
+                            </p:selectOneMenu>
+
+                            <p:commandButton actionListener="#{reportC.reporteinfodist(informacionC.informacionM.CODUBI)}"
+                                             value="Exportar a Excel" 
+                                             ajax="false" 
+                                             style="margin-right:20px;" 
+                                             styleClass="ui-priority-primary" 
+                                             update="growlIdIndep"/>
+
+                            <p:blockUI block="informacionPanel" trigger="dialogo filtro reporte" />
+                        </p:panelGrid>  
+                    </div>
+                </h:form>
+                <p:separator/>
+                <h:form id="flInformacion">
+                    <p:dataTable value="#{informacionC.listaInformacion}" 
+                                 var="listinfo" 
+                                 widgetVar="ListaTbInformacion" 
+                                 id="dtTableInformacion" 
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} 
+                                 {PreviousPageLink} {PageLinks} 
+                                 {NextPageLink} {LastPageLink}"
+                                 filteredValue="#{informacionC.listaInformacionFiltro}"
+                                 paginator="true" rows="10" style="margin-bottom:20px" reflow="true">
+
+
+                        <p:column filterBy="#{listinfo.NOMSECT}" headerText="Sector">
+                            <h:outputText value="#{listinfo.NOMSECT}"/>
+                        </p:column>
+
+                        <p:column width="150" headerText="Fecha de registro">
+                            <h:outputText value="#{listinfo.FECINFO}">
+                                <f:convertDateTime pattern="dd-MMM-yyyy" locale="es"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Persona Asignada">
+                            <h:outputText value="#{listinfo.NOMPER} #{listinfo.APEPER}"/>
+                        </p:column>
+
+                        <p:column width="220" headerText="Opciones">     
+                            <h:link class="ui-buttonLink ui-widget ui-state-default ui-corner-all ui-button-text-only" 
+                                    value="VER" 
+                                    outcome="Detalle_Informacion.xhtml">
+                                <f:param name="id" value="#{listinfo.IDINFO}"/>
+                            </h:link>
+                            <p:commandButton  ajax="false" actionListener="#{reportC.reporteinformacion(listinfo.IDINFO)}" value="Exportar a Excel"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

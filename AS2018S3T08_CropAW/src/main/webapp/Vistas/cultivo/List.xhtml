@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/Vistas/Template/Template.xhtml">
+
+        <ui:define name="title">
+            <h:outputText value="#{vistas.ListCultivoTitle}"></h:outputText>
+        </ui:define>
+
+        <ui:define name="content">
+            <h:form id="CultivoListForm">
+                <p:panel header="#{vistas.ListCultivoTitle}">
+                    <p:dataTable id="datalist" value="#{cultivoController.items}" var="item"
+                                 selectionMode="single" selection="#{cultivoController.selected}"
+                                 widgetVar="wdCultivoListForm"
+                                 paginator="true"
+                                 rowKey="#{item.IDCUL}"
+                                 rows="10"
+                                 rowsPerPageTemplate="10,20,30,40,50" reflow="true">
+                        <p:column filterBy="#{item.NOMCUL}" sortBy="#{item.NOMCUL}">
+                            <f:facet name="header">
+                                <h:outputText value="#{vistas.ListCultivoTitle_nomcul}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.NOMCUL}"/>
+                        </p:column>
+                        <p:column filterBy="#{item.TIPCUL}" headerText="#{vistas.ListCultivoTitle_tipcul}">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('wdCultivoListForm').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="Selecciones" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Permanentes" itemValue="PM"/>
+                                    <f:selectItem itemLabel="Semi-Permanentes" itemValue="SP"/>
+                                    <f:selectItem itemLabel="Transitorios" itemValue="TS"/>
+                                    <f:selectItem itemLabel="Hortalizas" itemValue="HT"/>
+                                    <f:selectItem itemLabel="Otros" itemValue="OT"/>
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{item.TIPCUL}">
+                                <f:converter converterId="C_TipoCultivo"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column filterBy="#{item.ESTACUL}" headerText="#{vistas.ListCultivoTitle_estacul}">
+                            <f:facet name="filter">
+                                <p:selectOneButton onchange="PF('wdCultivoListForm').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="A" itemValue="A" />
+                                    <f:selectItem itemLabel="I" itemValue="I" />
+                                </p:selectOneButton>    
+                            </f:facet>
+                            <h:outputText value="#{item.ESTACUL}">
+                                <f:converter converterId="C_Estado"/>
+                            </h:outputText>
+                        </p:column>
+                        <f:facet name="header">
+                            <p:commandButton id="createButton" icon="ui-icon-plus"   value="#{vistas.Create}" actionListener="#{cultivoController.prepareCreate}" update=":CultivoCreateForm" oncomplete="PF('CultivoCreateDialog').show()"/>
+                            <p:commandButton  ajax="false" actionListener="#{reportC.reportcultivo()}" value="Exportar a PDF"/>
+                        </f:facet>
+                    </p:dataTable>
+                    <p:contextMenu for="datalist">
+                        <p:menuitem id="viewButton"   icon="ui-icon-search" value="#{vistas.View}" update=":CultivoViewForm" oncomplete="PF('CultivoViewDialog').show()"/>
+                        <p:menuitem id="editButton"   icon="ui-icon-pencil" value="#{vistas.Edit}" update=":CultivoEditForm" oncomplete="PF('CultivoEditDialog').show()"/>
+                        <p:menuitem id="deleteButton" icon="ui-icon-trash"  value="#{vistas.Delete}" actionListener="#{cultivoController.destroy}" update=":growl,datalist" oncomplete="PF('wdCultivoListForm').filter()">
+                            <p:confirm header="¿Seguro que seas eliminar?" message="#{vistas.CultivoDeletedConfirm}" icon="fa fa-exclamation-triangle"/>
+                        </p:menuitem>    
+                    </p:contextMenu>
+                </p:panel>
+            </h:form>
+
+            <ui:include src="Create.xhtml"/>
+            <ui:include src="Edit.xhtml"/>
+            <ui:include src="View.xhtml"/>
+        </ui:define>
+    </ui:composition>
+
+</html>

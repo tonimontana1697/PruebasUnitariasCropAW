@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:composition>
+
+        <p:dialog id="PersonaCreateDlg" widgetVar="PersonaCreateDialog" modal="true" resizable="false" 
+                  appendTo="@(body)" header="#{vistas.CreatePersonaTitle}" responsive="true" closable="false">
+            <h:form id="PersonaCreateForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="4" rendered="#{personaController.selected != null}">
+                        <p:outputLabel value="#{vistas.CreatePersonaLabel_nomper}" for="nomper" />
+                        <p:inputText id="nomper" value="#{personaController.selected.NOMPER}" onkeyup="capitalize(this)" onblur="requiredField(this)" title="#{vistas.CreatePersonaTitle_nomper}" required="true" requiredMessage="#{vistas.CreatePersonaRequiredMessage_nomper}">
+                            <p:keyFilter regEx="/[a-z ]/i"/>  
+                        </p:inputText>
+                        <p:outputLabel value="#{vistas.CreatePersonaLabel_apeper}" for="apeper" />
+                        <p:inputText id="apeper" value="#{personaController.selected.APEPER}" onkeyup="upperCase(this)" onblur="requiredField(this)" title="#{vistas.CreatePersonaTitle_apeper}" required="true" requiredMessage="#{vistas.CreatePersonaRequiredMessage_apeper}">
+                            <p:keyFilter regEx="/[a-z- ]/i"/>  
+                        </p:inputText>
+                        <p:outputLabel value="#{vistas.CreatePersonaLabel_dniper}" for="dniper" />
+                        <p:inputMask id="dniper" validator="#{validateDni.validate}" value="#{personaController.selected.DNIPER}" title="#{vistas.CreatePersonaTitle_dniper}" required="true" requiredMessage="#{vistas.CreatePersonaRequiredMessage_dniper}"
+                                     mask="99999999" size="8">
+                            <p:ajax update=":growl" event="blur"/>
+                            <p:keyFilter regEx="/[0-9]/"/>                                              
+                        </p:inputMask>
+                        <p:outputLabel value="#{vistas.CreatePersonaLabel_telper}" for="telper" />
+                        <p:inputText id="telper" validator="#{V_Telefono.validate}" size="9" maxlength="9" value="#{personaController.selected.TELPER}" title="#{vistas.CreatePersonaTitle_telper}" >
+                            <p:ajax update=":growl" event="blur" />
+                        </p:inputText>
+                        <p:outputLabel value="#{vistas.CreatePersonaLabel_tipper}" for="tipper" />
+                        <p:selectOneButton id="tipper" value="#{personaController.selected.TIPPER}" required="true" requiredMessage="#{vistas.CreatePersonaRequiredMessage_tipper}">
+                            <f:selectItem itemLabel="Admin" itemValue="A" />
+                            <f:selectItem itemLabel="Usuario" itemValue="U" />
+                        </p:selectOneButton>
+                        <p:outputLabel value="#{vistas.CreatePersonaLabel_userper}" for="userper" />
+                        <p:inputText id="userper" size="7" maxlength="7" validator="#{V_Usuario.validate}" value="#{personaController.selected.USERPER}" title="#{vistas.CreatePersonaTitle_userper}" required="true" requiredMessage="#{vistas.CreatePersonaRequiredMessage_userper}">
+                            <p:ajax update=":growl" event="blur"/>
+                        </p:inputText>
+                        <p:outputLabel value="#{vistas.CreatePersonaLabel_pswper}" for="pswper" />
+                        <p:password id="pswper" value="#{personaController.selected.PSWPER}" match="pswper2" title="#{vistas.CreatePersonaTitle_pswper}" required="true" requiredMessage="#{vistas.CreatePersonaRequiredMessage_pswper}"/>
+                        <p:outputLabel value="#{vistas.EditPersonaLabel_pswperRepitNueva}" for="pswper2" />
+                        <p:password id="pswper2" value="#{personaController.selected.PSWPER}" onblur="requiredField(this)" title="#{vistas.EditPersonaTitle_pswper}" required="true" requiredMessage="#{vistas.EditPersonaRequiredMessage_pswper}"/>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{personaController.create}" value="#{vistas.Save}" update="display,:PersonaListForm:datalist,:growl" oncomplete="handleSubmit(args,'PersonaCreateDialog');"/>
+                    <p:commandButton value="#{vistas.Cancel}" update="display" process="@this" immediate="true" oncomplete="PF('PersonaCreateDialog').hide()">
+                        <p:resetInput target="display"/>
+                    </p:commandButton>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="CultivoEditDlg" widgetVar="CultivoEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{vistas.EditCultivoTitle}" closable="false" responsive="true">
+            <h:form id="CultivoEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{cultivoController.selected != null}">
+                        <p:outputLabel value="#{vistas.EditCultivoLabel_nomcul}" for="nomcul" />
+                        <p:inputText id="nomcul" value="#{cultivoController.selected.NOMCUL}" title="#{vistas.EditCultivoTitle_nomcul}" required="true" requiredMessage="#{vistas.EditCultivoRequiredMessage_nomcul}"/>
+                        <p:outputLabel value="#{vistas.EditCultivoLabel_tipcul}" for="tipcul" />
+                        <p:selectOneMenu id="tipcul" value="#{cultivoController.selected.TIPCUL}" title="#{vistas.EditCultivoTitle_tipcul}" required="true" requiredMessage="#{vistas.EditCultivoRequiredMessage_tipcul}">
+                            <f:selectItem itemLabel="Selecciones" itemValue="#{null}"/>
+                            <f:selectItem itemLabel="Permanentes" itemValue="PM"/>
+                            <f:selectItem itemLabel="Semi-Permanentes" itemValue="SP"/>
+                            <f:selectItem itemLabel="Transitorios" itemValue="TS"/>
+                            <f:selectItem itemLabel="Hortalizas" itemValue="HT"/>
+                            <f:selectItem itemLabel="Otros" itemValue="OT"/>
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{cultivoController.update}" value="#{vistas.Save}" update="display,:CultivoListForm:datalist,:growl" oncomplete="handleSubmit(args, 'CultivoEditDialog');PF('wdCultivoListForm').filter()"/>
+                    <p:commandButton value="#{vistas.Cancel}" update="display" process="@this" oncomplete="PF('CultivoEditDialog').hide()" resetValues="true"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

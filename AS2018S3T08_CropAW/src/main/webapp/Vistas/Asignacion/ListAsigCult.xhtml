@@ -1,0 +1,176 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <body>
+        <ui:composition template="/Vistas/Template/Template.xhtml">
+
+            <ui:define name="content">
+
+                <div class="contentTitle" style="text-align: center">
+                    <span class="titleVistas">Asignación Cultivo</span>
+                </div>
+
+                <h:form id="asigCult">
+                    <p:accordionPanel>
+                        <p:tab title="Asignar">
+                            <div class="ui-fluid">
+                                <p:panelGrid columns="2" 
+                                             columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                             layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid">
+                                    <h:outputText  value="Cultivo"/>
+                                    <p:selectOneMenu value="#{asignacionCultC.asigM.IDCUL}" filter="true" required="true" requiredMessage="Seleccione su Cultivo">
+                                        <f:selectItems value="#{cultivoC.listaCultivo}" var="lista" itemValue="#{lista.IDCUL}" itemLabel="#{lista.NOMCUL}"/>
+                                    </p:selectOneMenu>
+                                    <h:outputText value="Sector"/>
+                                    <p:selectOneMenu value="#{asignacionCultC.asigM.IDSECT}" filter="true" required="true" requiredMessage="Seleccione el Sector">
+                                        <f:selectItems value="#{sectorC.listaSector}" var="listsec" itemValue="#{listsec.IDSECT}" itemLabel="#{listsec.NOMSECT}"/>
+                                    </p:selectOneMenu>
+
+                                    <p:commandButton value="Asignar" 
+                                                     actionListener="#{asignacionCultC.asignarcult()}" 
+                                                     style="float:right"
+                                                     update="asigCult :growlIdIndep"
+                                                     oncomplete="if(args &amp;&amp; !args.validationFailed)PF('listTbAsigCultivo').filter()"
+                                                     />
+                                </p:panelGrid>
+                            </div>
+                            <br/>
+
+                        </p:tab>
+                    </p:accordionPanel>
+                </h:form>
+
+                <h:form>
+                    <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+
+                    <p:dialog style="background-image: none;
+                              background-color: transparent ;
+                              border-color: transparent" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                        <p:graphicImage name="/images/Cargar.gif"  style="display:block;height:300px;"/>
+                    </p:dialog>
+                </h:form>
+
+                <p:spacer height="10" />
+                <p:separator/>
+                <h:form id="estadosCultivo">
+                    <p:commandButton value="Activos"
+                                     id="btnActivo"
+                                     actionListener="#{asignacionCultC.listarTipo('A')}"
+                                     oncomplete="PF('listTbAsigCultivo').clearFilters()"/>
+                    <p:commandButton value="Inactivos" 
+                                     id="btnInactivo"
+                                     actionListener="#{asignacionCultC.listarTipo('I')}" 
+                                     oncomplete="PF('listTbAsigCultivo').clearFilters()"/>
+                    <p:commandButton  ajax="false" actionListener="#{reportC.reportasignacioncultivo()}" value="Exportar a PDF"/>
+                </h:form>               
+                <br/>
+
+                <h:form id="listCult">
+                    <p:dataTable id="datoscultivo" 
+                                 var="lista1" 
+                                 widgetVar="listTbAsigCultivo"
+                                 value="#{asignacionCultC.listAsig}"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+                                 {PreviousPageLink} {PageLinks} 
+                                 {NextPageLink} {LastPageLink} 
+                                 {RowsPerPageDropdown}"
+                                 reflow="true"
+                                 rows="12" paginator="true" 
+                                 rowsPerPageTemplate="6,12,16"
+                                 filteredValue="#{asignacionCultC.listAsigFilter}">
+
+                        <p:column filterBy="#{lista1.nombreculivo}" headerText="Cultivo">
+                            <h:outputText value="#{lista1.nombreculivo}"/>
+                        </p:column>
+
+                        <p:column filterBy="#{lista1.nombreSector}" headerText="Sector">
+                            <h:outputText value="#{lista1.nombreSector}"/>
+                        </p:column>
+
+                        <p:column width="250">
+                            <p:commandButton value="Modificar"
+                                             rendered="#{asignacionCultC.bt}"
+                                             oncomplete="PF('wdlgAsignarCult').show();" 
+                                             update="dlgAsignarCult">
+                                <f:setPropertyActionListener value="#{lista1}" target="#{asignacionCultC.asigMEdit}"/>
+                            </p:commandButton>
+
+                            <p:commandButton value="Inhabilitar"  
+                                             rendered="#{asignacionCultC.bt}"
+                                             actionListener="#{asignacionCultC.eliminar(lista1)}"
+                                             oncomplete="PF('listTbAsigCultivo').filter()"
+                                             update=":listCult:datoscultivo :growlIdIndep">
+                                <p:confirm header="Eliminar" message="Confirmar eliminar"/>
+                            </p:commandButton>
+
+                            <p:commandButton value="Habilitar"  
+                                             rendered="#{!asignacionCultC.bt}"
+                                             actionListener="#{asignacionCultC.habilitar(lista1)}"
+                                             oncomplete="PF('listTbAsigCultivo').filter()"
+                                             update=":listCult:datoscultivo :growlIdIndep">
+                                <p:confirm header="Habilitar" message="Confirmar eliminar"/>
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+
+                <p:dialog widgetVar="wdlgAsignarCult" closable="false" modal="true" header="Editar Asignacion de Cultivo"
+                          showEffect="blind" resizable="false" draggable="false">
+                    <h:form id="dlgAsignarCult">
+                        <p:panelGrid columns="1">
+                            <p:panelGrid columns="2">
+
+                                <h:outputText value="Cultivo"/>
+                                <p:selectOneMenu id="IDCULT1" 
+                                                 value="#{asignacionCultC.asigMEdit.IDCULI}" 
+                                                 filter="true" required="true" requiredMessage="Seleccione su Cultivo">
+                                    <f:selectItem itemLabel="---Seleccionar Cultivo---"/>
+                                    <f:selectItems value="#{cultivoC.listaCultivo}" 
+                                                   var="listacul" 
+                                                   itemValue="#{listacul.IDCUL}" 
+                                                   itemLabel="#{listacul.NOMCUL}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Sector"/>
+                                <p:selectOneMenu id="IDSECT1" 
+                                                 value="#{asignacionCultC.asigMEdit.IDSECTI}" 
+                                                 filter="true" required="true" requiredMessage="Seleccione el Sector">
+                                    <f:selectItem itemLabel="---Seleccionar Sector--"/>
+                                    <f:selectItems value="#{sectorC.listaSector}" 
+                                                   var="listsec" 
+                                                   itemValue="#{listsec.IDSECT}" 
+                                                   itemLabel="#{listsec.NOMSECT}"/>
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                        </p:panelGrid>
+                        <p:commandButton value="Modificar" 
+                                         actionListener="#{asignacionCultC.modificarasig()}"
+                                         update=":listCult:datoscultivo :dlgAsignarCult"
+                                         oncomplete="if(args &amp;&amp; !args.validationFailed)PF('wdlgAsignarCult').hide();PF('listTbAsigCultivo').filter()">
+                            <p:confirm  header="Confirmación" 
+                                        message="¿Deseas Modificar?"/>
+                            <p:tooltip trackMouse="true"/>
+                        </p:commandButton>
+                        <p:commandButton  value="Cancelar" 
+                                          immediate="true" 
+                                          update=":listCult:datoscultivo dlgAsignarCult" 
+                                          process="@this" 
+                                          oncomplete="PF('wdlgAsignarCult').hide();">
+                            <p:resetInput target="dlgAsignarCult" />
+                        </p:commandButton>
+                    </h:form>
+                </p:dialog>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

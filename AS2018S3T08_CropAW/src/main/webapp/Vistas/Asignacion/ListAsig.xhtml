@@ -1,0 +1,193 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <title>TODO supply a title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <body>
+
+        <ui:composition template="/Vistas/Template/Template.xhtml">
+            <ui:define name="content">
+
+                <div class="contentTitle" style="text-align: center">
+                    <span class="titleVistas">Asignación Persona</span>
+                </div>
+
+                <h:form id="AgreAsig">
+                    <p:accordionPanel>
+                        <p:tab title="Asignar">
+                            <div class="ui-fluid">
+                                <p:panelGrid columns="4" 
+                                             columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                             layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid">
+                                    <h:outputText value="Fecha"/>
+                                    <p:calendar placeholder="Fecha" styleClass="InputRespon" id="FECASIGD"
+                                                value="#{asignacionC.asigM.FECASIGD}"
+                                                required="true" requiredMessage="Se requiere fecha"
+                                                maxdate="#{informacionC.fechaAtual}" readonlyInput="true"
+                                                pattern="dd-MMM-yyyy" locale="es">
+                                        <p:ajax event="dateSelect"/>
+                                    </p:calendar>
+
+                                    <h:outputText value="Persona"/>
+                                    <p:selectOneMenu value="#{asignacionC.asigM.IDPER}" 
+                                                     required="true" requiredMessage="Se requiere Persona"
+                                                     filter="true">
+                                        <f:selectItem itemLabel="----Seleccione---"/>
+                                        <f:selectItems value="#{personalC.persList}" var="list" itemValue="#{list.IDPER}" itemLabel="#{list.APEPER} #{list.NOMPER}"/>
+                                    </p:selectOneMenu>
+
+                                    <h:outputText value="Asignacion"/>
+                                    <p:selectOneMenu  value="#{asignacionC.asigM.IDSECT}" 
+                                                      required="true" requiredMessage="Se requiere Sector"
+                                                      filter="true">
+                                        <f:selectItem itemLabel="----Seleccione---"/>
+                                        <f:selectItems value="#{sectorC.listaSector}" var="listsec" itemValue="#{listsec.IDSECT}" itemLabel="#{listsec.NOMSECT}"/>
+                                    </p:selectOneMenu>
+                                </p:panelGrid>
+
+                                <p:commandButton value="Asignar" 
+                                                 action="#{asignacionC.asignar()}" 
+                                                 update=":AgreAsig :listAsig:dtAsig" 
+                                                 oncomplete="if(args &amp;&amp; !args.validationFailed)PF('lisTable').filter()"                                                
+                                                 style="float:right"/>
+
+                            </div>
+                        </p:tab>
+                    </p:accordionPanel>
+                </h:form>
+
+                <h:form>
+                    <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+
+                    <p:dialog style="background-image: none;
+                              background-color: transparent ;
+                              border-color: transparent" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                        <p:graphicImage name="/images/Cargar.gif"  style="display:block;height:300px;"/>
+                    </p:dialog>
+                </h:form>
+                <p:spacer height="10" />
+                <p:separator/>
+
+                <h:form id="estadoSector">
+                    <p:commandButton value="Activos" 
+                                     id="btnActivo"
+                                     oncomplete="PF('lisTable').clearFilters()"
+                                     actionListener="#{asignacionC.listarEstado('A')}"
+                                     update=":listAsig:dtAsig"/>
+                    <p:commandButton value="Inactivos" 
+                                     id="btnInactivo"
+                                     oncomplete="PF('lisTable').clearFilters()"
+                                     actionListener="#{asignacionC.listarEstado('I')}"
+                                     update=":listAsig:dtAsig"/>
+                    <p:commandButton ajax="false" actionListener="#{reportC.reportasignacionpersonal()}" value="Exportar a PDF"/>
+                </h:form>
+                <br/>
+                <h:form id="listAsig">
+
+                    <p:dataTable id="dtAsig" widgetVar="lisTable" var="list" 
+                                 value="#{asignacionC.listAsig}" 
+                                 rows="12" paginator="true" 
+                                 rowsPerPageTemplate="6,12,16"
+                                 reflow="true"
+                                 filteredValue="#{asignacionC.listAsigFilter}"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+                                 {PreviousPageLink} {PageLinks} 
+                                 {NextPageLink} {LastPageLink} 
+                                 {RowsPerPageDropdown}">
+
+                        <p:column headerText="Fecha de Asginacion">
+                            <h:outputText value="#{list.FECASIGD}">
+                                <f:convertDateTime pattern="dd-MMM-yyyy" locale="es"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column filterBy="#{list.SECTOR}" headerText="Sector">
+                            <h:outputText value="#{list.SECTOR}"/>
+                        </p:column>
+                        <p:column filterBy="#{list.PERSONA}" headerText="Personal">
+                            <h:outputText value="#{list.PERSONA}"/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton rendered="#{asignacionC.bt}"  
+                                             value="Modificar" 
+                                             oncomplete="PF('wdlgasigPer').show();" 
+                                             update=":listAsig :dlgasigPer">
+                                <f:setPropertyActionListener value="#{list}" target="#{asignacionC.asigMEdit}"/>
+                            </p:commandButton>
+
+                            <p:commandButton rendered="#{asignacionC.bt}" 
+                                             actionListener="#{asignacionC.eliminar(list)}" 
+                                             value="Inhabilitar" 
+                                             oncomplete="PF('lisTable').clearFilters()"
+                                             update="listAsig listAsig:dtAsig">
+                                <p:confirm  header="Confirmación" message="¿Deseas eliminar?"/>
+                            </p:commandButton>
+
+                            <p:commandButton rendered="#{!asignacionC.bt}" 
+                                             actionListener="#{asignacionC.hablitiar(list)}" 
+                                             value="Habilitar" 
+                                             oncomplete="PF('lisTable').clearFilters()"
+                                             update="listAsig listAsig:dtAsig">
+                                <p:confirm  header="Confirmación" message="¿Deseas eliminar?"/>
+                            </p:commandButton>
+
+                        </p:column>
+                    </p:dataTable>
+                </h:form> 
+                <p:dialog closable="false" widgetVar="wdlgasigPer" modal="true" header="Asignacion Modificar"
+                          showEffect="blind" resizable="false" draggable="false">
+                    <h:form id="dlgasigPer">
+                        <div class="ui-fluid">
+                            <p:panelGrid columns="4" 
+                                         columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                         layout="grid" 
+                                         styleClass="ui-panelgrid-blank ui-fluid">
+
+
+                                <h:outputText value="Fecha"/>
+                                <p:calendar id="mask" maxdate="#{informacionC.fechaAtual}" 
+                                            value="#{asignacionC.asigMEdit.FECASIGD}" 
+                                            required="true" requiredMessage="Ingrese Fecha"
+                                            pattern="dd-MMM-yyyy" mask="true" locale="es">
+                                    <p:ajax event="dateSelect"/>
+                                </p:calendar>
+
+                                <h:outputText value="Persona"/>
+                                <p:selectOneMenu value="#{asignacionC.asigMEdit.IDPER}">
+                                    <f:selectItem itemLabel="----Seleccione---"/>
+                                    <f:selectItems value="#{personalC.persList}" var="list" itemValue="#{list.IDPER}" itemLabel="#{list.NOMPER} #{list.APEPER} "/>
+                                </p:selectOneMenu>
+
+                                <h:outputText value="Asignacion"/>
+                                <p:selectOneMenu  value="#{asignacionC.asigMEdit.IDSECT}">
+                                    <f:selectItem itemLabel="----Seleccione---"/>
+                                    <f:selectItems value="#{sectorC.listaSector}" var="listsec" itemValue="#{listsec.IDSECT}" itemLabel="#{listsec.NOMSECT}"/>
+                                </p:selectOneMenu>
+
+
+                            </p:panelGrid>
+                        </div>
+                        <p:commandButton actionListener="#{asignacionC.modificar()}" 
+                                         value="Modificar" update=":listAsig:dtAsig"
+                                         oncomplete="if(!args.validationFailed)PF('wdlgasigPer').hide();PF('lisTable').filter();">
+                        </p:commandButton>
+
+                        <p:commandButton  value="Cancelar" immediate="true" update=":listAsig:dtAsig dlgasigPer" 
+                                          process="@this" oncomplete="PF('wdlgasigPer').hide();">
+                            <p:resetInput target="dlgasigPer" />
+                        </p:commandButton>
+                    </h:form>
+                </p:dialog>
+
+
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

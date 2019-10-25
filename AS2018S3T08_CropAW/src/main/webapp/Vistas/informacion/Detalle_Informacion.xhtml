@@ -1,0 +1,295 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../Template/Template.xhtml">
+
+            <ui:define name="content">
+                <div class="contentTitle" style="text-align: center">
+                    <span class="titleVistas">Detalle información</span>
+                </div>
+                <h:form>
+
+                    <p:link class="ui-buttonLink ui-buttonLink-border ui-widget ui-state-default ui-corner-all ui-button-text-only" 
+                            value="Volver" 
+                            outcome="Informacion.xhtml"/>
+
+                    <p:commandButton value="Refrescar" actionListener="#{detalleInformacionC.listar()}" 
+                                     update=":flDetalleInformacion:dtDetalleInformacion"/>
+                </h:form>
+                <p:spacer height="10" />
+                <p:separator/>
+                <h:form id="flDetalleInformacion">
+                    <p:dataTable widgetVar="wdtDetalleInformacion" id="dtDetalleInformacion" 
+                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} 
+                                 {PreviousPageLink} {PageLinks} 
+                                 {NextPageLink} {LastPageLink}"
+                                 paginator="true" rows="7" style="margin-bottom:20px" 
+                                 var="lista" value="#{detalleInformacionC.listaDetInfo}"
+                                 filteredValue="#{detalleInformacionC.listaDetInfoFilter}">
+
+                        <p:column width="20">
+                            <p:rowToggler />
+                        </p:column>
+                        <p:column width="100" headerText="Tipo" >
+                            <h:outputText value="#{lista.TIPCUL}">
+                                <f:converter converterId="TipCulConverter" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column width="150" headerText="Cultivo" >
+                            <h:outputText value="#{lista.NOMCUL}"/>
+                        </p:column>
+
+                        <p:column width="70" headerText="Mes anterior" >
+                            <h:outputText value="#{lista.VERMESANT}"/>
+                        </p:column>
+
+                        <p:column width="70" headerText="Sembrado" >
+                            <h:outputText value="#{lista.SEMDET}"/>
+                        </p:column>
+
+
+                        <p:column width="70" headerText="Cosechado" >
+                            <h:outputText value="#{lista.COSDET}"/>
+                        </p:column>
+
+                        <p:column width="70" headerText="VERDE">
+                            <h:outputText value="#{lista.VERDMES}"/>
+                        </p:column>
+                        <p:column width="140" filterBy="#{lista.VALDET}" 
+                                  headerText="Estado" filterMatchMode="equals">
+                            <f:facet name="filter">
+                                <p:selectOneButton onchange="PF('wdtDetalleInformacion').filter()" styleClass="custom-filter">
+                                    <f:selectItem itemLabel="E" itemValue="E" />
+                                    <f:selectItem itemLabel="V" itemValue="V" />
+                                    <f:selectItem itemLabel="R" itemValue="R" />   
+                                </p:selectOneButton>
+                            </f:facet>
+                            <h:outputText value="#{lista.VALDET}" >
+                                <f:converter converterId="ConverterDetInfoEstado"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Opciones" width="200">
+                            <p:commandButton oncomplete="PF('wdlgModificarDetalleInfo').show();" 
+                                             value="editar" 
+                                             update="flDetalleInformacion:dtDetalleInformacion :frModificarDetalleInfo ">
+                                <f:setPropertyActionListener value="#{lista}" target="#{detalleInformacionC.detInfoMEditar}"/>
+                            </p:commandButton>
+                            <p:commandButton actionListener="#{detalleInformacionC.invalidar(lista)}" 
+                                             value="X"
+                                             oncomplete="PF('wdtDetalleInformacion').filter()"
+                                             update=":flDetalleInformacion:dtDetalleInformacion">
+                                <p:confirm header="Invalidar" message="¿Desea invalidar este registro?"/>
+                            </p:commandButton>
+                            <p:commandButton actionListener="#{detalleInformacionC.validar(lista)}" 
+                                             value="&#10004;"
+                                             oncomplete="PF('wdtDetalleInformacion').filter()"
+                                             update=":flDetalleInformacion:dtDetalleInformacion">
+                                <p:confirm header="Invalidar" message="¿Desea invalidar este registro?"/>
+                            </p:commandButton>
+
+                        </p:column>
+                        <h:form>
+                            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+
+                            <p:dialog style="background-image: none;
+                                      background-color: transparent ;
+                                      border-color: transparent" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                                <p:graphicImage name="/images/Cargar.gif"  style="display:block;height:300px;"/>
+                            </p:dialog>
+                        </h:form>
+
+                        <p:rowExpansion>
+                            <p:scrollPanel style="width:100%;height:100%">
+                                <p:panelGrid  columns="6" columnClasses="label,value">
+
+                                    <h:outputText value="PERDIDA" />
+                                    <h:outputText value="#{lista.PERDET}"/>
+
+                                    <h:outputText value="AFECTA" />
+                                    <h:outputText value="#{lista.AFEDET}"/>
+
+                                    <h:outputText value="ROTACION" />
+                                    <h:outputText value="#{lista.ROTDET}"/>
+
+                                    <h:outputText value="PRODUCCION" />
+                                    <h:outputText value="#{lista.PRODDET}"/>
+
+                                    <h:outputText value="PRECIO" />
+                                    <h:outputText value="#{lista.PRECHA}"/>
+
+                                    <h:outputText value="FECHA" />
+                                    <h:outputText value="#{lista.FECCOS}"/>
+
+                                </p:panelGrid>
+                            </p:scrollPanel>
+                        </p:rowExpansion>
+
+                    </p:dataTable>
+                </h:form>
+
+                <p:dialog widgetVar="wdlgModificarDetalleInfo" 
+                          modal="true"
+                          responsive="true">
+
+                    <h:form id="frModificarDetalleInfo" >
+                        <p:panelGrid layout="grid" columns="1">
+                            <p:panelGrid columns="2">
+
+                                <h:outputLabel for="VERMESANT" value="Mes anterior" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <h:outputText styleClass="InputRespon" 
+                                                  id="VERMESANT" 
+                                                  value="#{detalleInformacionC.detInfoMEditar.VERMESANT}"/>
+                                </h:panelGroup>
+                                
+                                <h:outputLabel for="CREDET" value="Crecimiento" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" 
+                                               onchange="calcular()"
+                                               onkeyup="calcular()"
+                                               onblur="calcular()"
+                                               id="CREDET" 
+                                               min="0" max="99999.99"  stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.CREDET}">
+                                    <p:keyFilter regEx="/[0-9]/"/>   
+                                    </p:spinner>
+                                </h:panelGroup>
+
+
+                                <h:outputLabel for="PRODET" value="Producción" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" 
+                                               onchange="calcular()"
+                                               onkeyup="calcular()"
+                                               onblur="calcular()"
+                                               id="PRODET" 
+                                               min="0" maxlength="4"  stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.PRODET}">
+                                    <p:keyFilter regEx="/[0-9]/"/>   
+                                    </p:spinner>
+                                </h:panelGroup>
+                                
+                                
+
+                                <h:outputLabel for="SEMDET" value="Sembrado" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" id="SEMDET" 
+                                               onchange="calcular()"
+                                               onkeyup="calcular()"
+                                               onblur="calcular()"
+                                               min="0" stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.SEMDET}">
+                                    <p:keyFilter regEx="/[0-9]/"/>   
+                                    </p:spinner>
+                                </h:panelGroup>
+
+
+
+                                <h:outputLabel for="COSDET" value="Cosechado" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" 
+                                               onchange="calcular()"
+                                               onkeyup="calcular()"
+                                               onblur="calcular()"
+                                               maxlength="7" id="COSDET" min="0" stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.COSDET}">
+                                    <p:keyFilter regEx="/[0-9]/"/>   
+                                    </p:spinner>
+                                </h:panelGroup>
+
+
+                                <h:outputLabel for="PERDET" value="Perdida" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" 
+                                               id="PERDET" 
+                                               onchange="calcular()"
+                                               onkeyup="calcular()"
+                                               onblur="calcular()"
+                                               min="0" maxlength="7" stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.PERDET}">
+                                    <p:keyFilter regEx="/[0-9]/"/>   
+                                    </p:spinner>
+                                </h:panelGroup>
+
+                                <h:outputLabel for="AFEDET" value="Afectada" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" id="AFEDET" 
+                                               onchange="calcular()"
+                                               onkeyup="calcular()"
+                                               onblur="calcular()"
+                                               min="0" maxlength="7" stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.AFEDET}">
+                                    <p:keyFilter regEx="/[0-9]/"/>   
+                                    </p:spinner>
+                                </h:panelGroup>
+
+
+                                <h:outputLabel for="ROTDET" value="Rotacion" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" id="ROTDET" 
+                                               onchange="calcular()"
+                                               onkeyup="calcular()"
+                                               onblur="calcular()"
+                                               min="0" maxlength="7" stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.ROTDET}" >
+                                        <p:keyFilter regEx="/[0-9]/"/>    
+                                    </p:spinner>
+                                </h:panelGroup>
+
+
+
+                                <h:outputLabel for="VERDMES" value="En verde del mes" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <h:outputText styleClass="InputRespon"
+                                                  id="VERDMES"
+                                                  value="#{detalleInformacionC.detInfoMEditar.VERDMES}"/>
+                                </h:panelGroup>
+
+                                <h:outputLabel for="PRODDET" value="Producion" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" id="PRODDET" 
+                                               min="0" maxlength="7" stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.PRODDET}">
+                                    <p:keyFilter regEx="/[0-9]/"/>   
+                                    </p:spinner>
+                                </h:panelGroup>
+
+
+                                <h:outputLabel for="PRECHA" value="Precio en chacra" />
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:spinner styleClass="InputRespon" id="PRECHA" 
+                                               min="0" maxlength="4" stepFactor="0.25"
+                                               required="true" value="#{detalleInformacionC.detInfoMEditar.PRECHA}">
+                                    <p:keyFilter regEx="/[0-9]/"/>   
+                                    </p:spinner>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:panelGrid>
+
+
+                        <p:commandButton styleClass="boton" value="Modificar" 
+                                         actionListener="#{detalleInformacionC.modificar()}" 
+                                         update=":flDetalleInformacion:dtDetalleInformacion"
+                                         oncomplete="PF('wdlgModificarDetalleInfo').hide()"/>
+
+                    </h:form>
+
+
+
+                </p:dialog>
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

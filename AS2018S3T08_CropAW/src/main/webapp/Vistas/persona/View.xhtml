@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:composition>
+
+        <p:dialog id="PersonaViewDlg" widgetVar="PersonaViewDialog" modal="true" resizable="false" 
+                  appendTo="@(body)" header="#{vistas.ViewPersonaTitle}" responsive="true" closable="false">
+            <h:form id="PersonaViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{personaController.selected != null}">
+                        <h:outputText value="#{vistas.ViewPersonaLabel_nomper}"/>
+                        <h:outputText value="#{personaController.selected.NOMPER}" title="#{vistas.ViewPersonaTitle_nomper}"/>
+                        <h:outputText value="#{vistas.ViewPersonaLabel_apeper}"/>
+                        <h:outputText value="#{personaController.selected.APEPER}" title="#{vistas.ViewPersonaTitle_apeper}"/>
+                        <h:outputText value="#{vistas.ViewPersonaLabel_dniper}"/>
+                        <h:outputText value="#{personaController.selected.DNIPER}" title="#{vistas.ViewPersonaTitle_dniper}"/>
+                        <h:outputText value="#{vistas.ViewPersonaLabel_telper}"/>
+                        <h:outputText value="#{personaController.selected.TELPER}" title="#{vistas.ViewPersonaTitle_telper}"/>
+                        <h:outputText value="#{vistas.ViewPersonaLabel_tipper}"/>
+                        <h:outputText value="#{personaController.selected.TIPPER}" title="#{vistas.ViewPersonaTitle_tipper}" converter="C_TipoUsuario"/>
+                        <h:outputText value="#{vistas.ViewPersonaLabel_estaper}"/>
+                        <h:outputText value="#{personaController.selected.ESTAPER}" title="#{vistas.ViewPersonaTitle_estaper}" converter="C_Estado"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{vistas.Close}" oncomplete="PF('PersonaViewDialog').hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

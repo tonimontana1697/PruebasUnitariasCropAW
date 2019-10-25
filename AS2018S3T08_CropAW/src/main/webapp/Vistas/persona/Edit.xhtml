@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <ui:composition>
+
+        <p:dialog id="PersonaEditDlg" widgetVar="PersonaEditDialog" modal="true" resizable="false" appendTo="@(body)" header="#{vistas.EditPersonaTitle}" closable="false" responsive="true" dynamic="true">
+            <h:form id="PersonaEditForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{personaController.selected != null}">
+                        <p:outputLabel value="#{vistas.EditPersonaLabel_nomper}" for="nomper" />
+                        <p:inputText id="nomper" value="#{personaController.selected.NOMPER}" onkeyup="capitalize(this)" onblur="requiredField(this)" title="#{vistas.EditPersonaTitle_nomper}" required="true" requiredMessage="#{vistas.EditPersonaRequiredMessage_nomper}">
+                            <p:keyFilter regEx="/[a-z- ]/i"/>  
+                        </p:inputText>
+                        <p:outputLabel value="#{vistas.EditPersonaLabel_apeper}" for="apeper" />
+                        <p:inputText id="apeper" value="#{personaController.selected.APEPER}" onkeyup="upperCase()(this)" onblur="requiredField(this)" title="#{vistas.EditPersonaTitle_apeper}" required="true" requiredMessage="#{vistas.EditPersonaRequiredMessage_apeper}">
+                            <p:keyFilter regEx="/[a-z- ]/i"/>  
+                        </p:inputText>
+                        <p:outputLabel value="#{vistas.EditPersonaLabel_dniper}" for="dniper" />
+                        <p:inputMask id="dniper" 
+                                     value="#{personaController.selected.DNIPER}"
+                                     title="#{vistas.EditPersonaTitle_dniper}"
+                                     required="true" requiredMessage="#{vistas.EditPersonaRequiredMessage_dniper}"
+                                     placeholder="Ingresar DNI"
+                                     size="8"
+                                     maxlength="8"
+                                     mask="99999999"
+                                     onblur="validateMask(this)">
+                            <p:keyFilter regEx="/[0-9]/"/>                                              
+                        </p:inputMask>
+                        <p:outputLabel value="#{vistas.EditPersonaLabel_telper}" for="telper" />
+                        <p:inputText id="telper" size="9" maxlength="9" value="#{personaController.selected.TELPER}" title="#{vistas.EditPersonaTitle_telper}" validator="#{V_TelefonoLength.validate}"/>
+                        <p:outputLabel value="#{vistas.EditPersonaLabel_tipper}" for="tipper" />
+                        <p:selectOneButton id="tipper" value="#{personaController.selected.TIPPER}" required="true" requiredMessage="#{vistas.EditPersonaRequiredMessage_tipper}">
+                            <f:selectItem itemLabel="Admin" itemValue="A" />
+                            <f:selectItem itemLabel="Usuario" itemValue="U" />
+                        </p:selectOneButton>
+                        <p:outputLabel value="#{vistas.EditPersonaLabel_estaper}" for="estaper" />
+                        <p:selectOneRadio unselectable="true" id="estaper" value="#{personaController.selected.ESTAPER}" required="true" requiredMessage="#{vistas.CreateCultivoRequiredMessage_estacul}">
+                            <f:selectItem itemLabel="Activo" itemValue="A"/>
+                            <f:selectItem itemLabel="Inactivo" itemValue="I"/>
+                        </p:selectOneRadio>
+                    </p:panelGrid>
+                    <p:commandButton actionListener="#{personaController.update}" value="#{vistas.Save}" update="display,:PersonaListForm:datalist,:growl" oncomplete="handleSubmit(args, 'PersonaEditDialog');PF('wddatalist').filter()"/>
+                    <p:commandButton value="#{vistas.Cancel}" update="display" process="@this" oncomplete="PF('PersonaEditDialog').hide()" resetValues="true"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>

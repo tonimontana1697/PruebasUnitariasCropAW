@@ -1,0 +1,398 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+    <body>
+        <ui:composition template="/Vistas/Template/Template.xhtml">
+            <ui:param name = "title" value = "Persona" />
+            <ui:define name="content">
+                <div class="contentTitle" style="text-align: center">
+                    <span class="titleVistas">Persona</span>
+                </div>
+
+                <h:form id="formAgre">
+                    <p:accordionPanel>
+                        <p:tab title="Registro">
+                            <div class="ui-fluid">
+                                <p:panelGrid columns="4" 
+                                             columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                             layout="grid" 
+                                             styleClass="ui-panelgrid-blank ui-fluid">
+
+                                    <h:outputLabel for="NOMPER" value="Nombre"/>
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText id="NOMPER"
+                                                     required="true" 
+                                                     placeholder="Ingresar Nombre"  
+                                                     onkeyup="capitalize(this)" 
+                                                     value="#{personalC.personalM.NOMPER}"
+                                                     maxlength="20"
+                                                     requiredMessage="Nombre Requerido"
+                                                     onblur="requiredField(this)">
+                                            <p:keyFilter regEx="/[a-z ]/i"/>  
+                                        </p:inputText>
+                                    </h:panelGroup>
+
+                                    <h:outputLabel for="APEPER" value="Apellido"/>
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText placeholder="Ingresar Apellido" 
+                                                     id="APEPER" onkeyup="upperCase(this)" 
+                                                     value="#{personalC.personalM.APEPER}"
+                                                     maxlength="20" required="true" 
+                                                     onblur="requiredField(this)"
+                                                     requiredMessage="Apellido Requerido">
+                                            <p:keyFilter regEx="/[a-z- ]/i"/>  
+                                        </p:inputText>   
+                                    </h:panelGroup>
+
+                                    <h:outputLabel for="DNIPER" value="DNI"/>
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="DNIPER" 
+                                                     value="#{personalC.personalM.DNIPER}" 
+                                                     placeholder="Ingresar DNI"
+                                                     maxlength="8"
+                                                     mask="99999999"
+                                                     required="true" 
+                                                     onblur="validateMask(this)"
+                                                     requiredMessage="Se requiere un DNI valido.">
+                                            <f:validator validatorId="validarExistenciaPersona" />
+                                            <p:keyFilter regEx="/[0-9]/"/>                                              
+                                        </p:inputMask>
+                                    </h:panelGroup>
+
+
+                                    <h:outputLabel for="TELPER" value="Telefono"/>
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputMask id="TELPER"  
+                                                     mask="999999999" 
+                                                     maxlength="9"
+                                                     placeholder="Ingresar Telefono" 
+                                                     onblur="validateMask(this)"
+                                                     value="#{personalC.personalM.TELPER}"> 
+                                            <f:validator validatorId="validarExistenciasNumeros" for="TELPER"/>
+                                        </p:inputMask>
+                                    </h:panelGroup>
+
+
+                                    <h:outputLabel for="selectTipo" value="Tipo de persona"/>
+                                    <p:selectOneRadio id="selectTipo" value="#{personalC.personalM.TIPPER}"
+                                                      required="true" requiredMessage="Tipo de usuario requerido" >
+                                        <f:selectItem itemValue="A" itemLabel="Administrador" />
+                                        <f:selectItem itemValue="U" itemLabel="Usuario"/>
+                                    </p:selectOneRadio>
+
+                                    <h:outputLabel for="USERPER" value="Usuario"/>
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:inputText placeholder="Ingresar Usuario"
+                                                     id="USERPER" 
+                                                     value="#{personalC.personalM.USERPER}"
+                                                     maxlength="10"
+                                                     required="true" 
+                                                     onblur="requiredField(this)"
+                                                     requiredMessage="Se requiere un usuario.">
+                                            <f:validator validatorId="validarUsarioExistente"/>
+                                        </p:inputText>
+                                    </h:panelGroup>
+
+
+                                    <h:outputLabel for="psw1" value="Contraseña"/>
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:password id="psw1" 
+                                                    value="#{personalC.personalM.PSWPER}" 
+                                                    placeholder="Contraseña"
+                                                    match="psw2" 
+                                                    feedback="true"  
+                                                    promptLabel="Ingrese una clave" 
+                                                    validatorMessage="Las contraseñas no coinciden" 
+                                                    weakLabel="Debil" 
+                                                    strongLabel="Bueno"
+                                                    goodLabel="Fuerte" 
+                                                    required="true" 
+                                                    onblur="requiredField(this)"
+                                                    maxlength="8"
+                                                    requiredMessage="Se requiere contraseña" />
+                                    </h:panelGroup>
+
+                                    <h:outputLabel for="psw12" value="Repetir Contraseña"/>
+                                    <h:panelGroup styleClass="md-inputfield">
+                                        <p:password id="psw2" 
+                                                    placeholder="Repetir Contraseña" 
+                                                    required="true" 
+                                                    onblur="requiredField(this)"
+                                                    requiredMessage="Repetir Contraseña"/>
+                                    </h:panelGroup>
+                                </p:panelGrid>
+                                <p:commandButton value="Agregar" 
+                                                 actionListener="#{personalC.registar()}"  
+                                                 oncomplete="if(args &amp;&amp; !args.validationFailed)PF('ListaTable').filter();"
+                                                 update=":formAgre :formLista :growlIdIndep"/>
+                            </div>
+                        </p:tab>
+                    </p:accordionPanel>
+                </h:form>
+                <h:form>
+                    <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()"/>
+
+                    <p:dialog style="background-image: none;
+                              background-color: transparent ;
+                              border-color: transparent" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                        <p:graphicImage name="/images/Cargar.gif"  style="display:block;height:300px;"/>
+                    </p:dialog>
+                </h:form>
+
+                <p:spacer height="10" />
+                <p:separator/>
+
+                <h:form id="estadosPersona">
+                    <p:commandButton value="Activo"
+                                     id="btnActivo"
+                                     oncomplete="PF('ListaTable').clearFilters()"
+                                     actionListener="#{personalC.listar('A')}"
+                                     update=":formLista:dtTablePers"/>
+
+                    <p:commandButton value="Inactivo"
+                                     id="btnInactivo"
+                                     oncomplete="PF('ListaTable').clearFilters()"
+                                     actionListener="#{personalC.listar('I')}"
+                                     update=":formLista:dtTablePers"/>
+                    <p:commandButton  ajax="false" actionListener="#{reportC.reportpersonal()}" value="Exportar a PDF"/>
+                </h:form>
+                <p:spacer height="10" />
+                <p:separator/>
+                <h:form id="formLista" ><!--Lista Persona-->
+
+                    <p:dataTable value="#{personalC.persList}" 
+                                 widgetVar="ListaTable" 
+                                 var="listper" 
+                                 id="dtTablePers"
+                                 rowsPerPageTemplate="6,12,16"
+                                 paginatorTemplate="{CurrentPageReport}  
+                                 {FirstPageLink}{PreviousPageLink}{PageLinks} 
+                                 {NextPageLink} {LastPageLink}"
+                                 paginator="true" 
+                                 rows="12" 
+                                 style="margin-bottom:20px" 
+                                 reflow="true" 
+                                 filteredValue="#{personalC.persListFilter}"><!--Empieza listado-->
+
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="LISTA DE USUARIOS" /> 
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <p:column filterBy="#{listper.NOMPER} #{listper.APEPER}" headerText="Nombres">                  
+                            <h:outputText value="#{listper.NOMPER} #{listper.APEPER}"/>
+                        </p:column>
+
+                        <p:column filterBy="#{listper.DNIPER}" headerText="DNI" width="100">
+                            <h:outputText value="#{listper.DNIPER}"/>
+                        </p:column>
+
+                        <p:column headerText="Telefono" width="130">
+                            <h:outputText value="#{listper.TELPER}"/>
+                        </p:column>
+
+                        <p:column headerText="Tipo" width="130">
+                            <h:outputText value="#{listper.TIPPER}">
+                                <f:converter converterId="Convertir"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column width="150" headerText="Usuario" >
+                            <h:outputText value="#{listper.USERPER}"/>
+                        </p:column>
+
+                        <p:column headerText="Opciones" width="230"><!--Modificar-->
+                            <p:commandButton  rendered="#{personalC.bt}"
+                                              oncomplete="PF('wdlgModificar').show();"
+                                              update=":dlgModificar" 
+                                              value="Editar">
+                                <f:setPropertyActionListener value="#{listper}" target="#{personalC.perEdit}" />  
+                            </p:commandButton>
+
+                            <p:commandButton rendered="#{personalC.bt}" icon="" 
+                                             update="formLista formLista:dtTablePers"
+                                             oncomplete="PF('ListaTable').clearFilters()"
+                                             actionListener="#{personalC.eliminar(listper)}" 
+                                             value="Inhabilitar">
+                                <p:confirm header="Confirmación" message="¿Deseas Inabilitar? " icon="advertencia-icon" />
+                                <p:tooltip trackMouse="true"/>
+                            </p:commandButton>
+
+                            <p:commandButton rendered="#{!personalC.bt}" icon="" 
+                                             update="formLista formLista:dtTablePers"
+                                             oncomplete="PF('ListaTable').clearFilters()"
+                                             actionListener="#{personalC.habilitar(listper)}" 
+                                             value="Habilitar">
+                                <p:confirm header="Confirmación" message="¿Deseas habilitar? " icon="advertencia-icon" />
+                                <p:tooltip trackMouse="true"/>
+                            </p:commandButton>
+
+                        </p:column><!--eliminar-->
+                        <f:facet name="footer">
+                            HAY #{fn:length(personalC.persList)} USUARIOS.
+                        </f:facet>
+                    </p:dataTable><!--Termina listado-->
+                </h:form><!--Lista Persona-->
+
+                <p:dialog closable="false"  widgetVar="wdlgModificar" modal="true" header="Modificar Personal" 
+                          showEffect="blind" resizable="false" draggable="false"><!--Modificar dlg-->
+                    <h:form id="dlgModificar">
+                        <div class="ui-fluid">
+                            <p:panelGrid columns="4" 
+                                         columnClasses="ui-g-12 ui-md-2,ui-g-12 ui-md-4,ui-g-12 ui-md-2,ui-g-12 ui-md-4" 
+                                         layout="grid" 
+                                         styleClass="ui-panelgrid-blank ui-fluid">
+
+
+
+                                <h:outputLabel for="NOMPER" value="Nombre"/>
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:inputText placeholder="Ingresar Nombre" 
+                                                 onkeyup="capitalize(this)" 
+                                                 id="NOMPER" 
+                                                 value="#{personalC.perEdit.NOMPER}"
+                                                 maxlength="100" required="true" 
+                                                 onblur="requiredField(this)"
+                                                 requiredMessage="El nombre esta en blanco.">
+                                        <p:keyFilter regEx="/[a-z ]/i"/>
+                                    </p:inputText>
+                                </h:panelGroup>
+
+                                <h:outputText value="Apellido"/>
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:inputText placeholder="Ingresar Apellido" 
+                                                 onkeyup="upperCase(this)" id="APEPER" 
+                                                 value="#{personalC.perEdit.APEPER}"
+                                                 maxlength="100" required="true" 
+                                                 onblur="requiredField(this)"
+                                                 requiredMessage="El apellido esta en blanco.">
+                                        <p:keyFilter regEx="/[a-z ]/i"/>
+                                    </p:inputText>
+                                </h:panelGroup>
+
+                                <h:outputText value="DNI"/>
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:inputMask mask="99999999" 
+                                                 maxlength="8" 
+                                                 id="DNIPER" 
+                                                 placeholder="Ingresar DNI" 
+                                                 value="#{personalC.perEdit.DNIPER}" 
+                                                 required="true" 
+                                                 onblur="validateMask(this)"
+                                                 requiredMessage="Se requiere un DNI valido."/>
+                                </h:panelGroup>
+
+                                <h:outputText value="Telefono"/>
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:inputMask mask="999999999" 
+                                                 maxlength="9" 
+                                                 placeholder="Ingresar Telefono" 
+                                                 value="#{personalC.perEdit.TELPER}"/>
+                                </h:panelGroup>
+
+
+
+                                <h:outputText value="Tipo"/>
+                                <p:selectOneRadio id="selectTipo" value="#{personalC.perEdit.TIPPER}">
+                                    <f:selectItem  itemValue="A"  itemLabel="Administrador"/>
+                                    <f:selectItem  itemValue="U" itemLabel="Usuario"/>
+                                </p:selectOneRadio>
+
+
+
+
+                                <h:outputText value="Usuario"/>
+                                <h:outputText value="#{personalC.perEdit.USERPER}"/>
+
+                                <h:outputText value="Modificar"/>
+                                <p:commandButton update=":dlgModificarCredencial" value="Editar Credenciales" 
+                                                 oncomplete="PF('wdlgModificarCredencial').show();"/>
+
+                            </p:panelGrid>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+                                    <p:commandButton value="Actualizar" actionListener="#{personalC.modificar()}"
+                                                     update=":formLista:dtTablePers"
+                                                     oncomplete="if(args &amp;&amp; !args.validationFailed)PF('wdlgModificar').hide();PF('ListaTable').filter();">
+                                        <p:confirm  header="Confirmación" message="¿Deseas Modificar?"/>
+                                        <p:tooltip trackMouse="true"/>
+                                    </p:commandButton>
+                                </div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">
+
+                                    <p:commandButton  value="Cancelar" immediate="true" update=":formLista:dtTablePers dlgModificar" process="@this" oncomplete="PF('wdlgModificar').hide();">
+                                        <p:resetInput target="dlgModificar" />
+                                    </p:commandButton>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </p:dialog><!--Modificar dlg-->
+
+                <p:dialog widgetVar="wdlgModificarCredencial" closable="false" modal="true" header="Modificar Personal" 
+                          showEffect="blind" resizable="false" draggable="false" responsive="true">                  
+                    <h:form id="dlgModificarCredencial">
+                        <p:panelGrid layout="grid" columns="1">
+                            <p:panelGrid columns="2">
+
+                                <h:outputText value="Usuario"/>
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:inputText placeholder="Ingresar Usuario" 
+                                                 value="#{personalC.perEdit.USERPER}"
+                                                 onblur="requiredField(this)"
+                                                 maxlength="10"/>
+                                </h:panelGroup>
+
+                                <h:outputText value="Contraseña"/>
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:password id="psw1"  value="#{personalC.perEdit.PSWPER}" 
+                                                placeholder="Contraseña"
+                                                match="psw2" feedback="true"  
+                                                promptLabel="Ingrese una clave" 
+                                                validatorMessage="Las contraseñas no coinciden" 
+                                                weakLabel="Debil"  
+                                                strongLabel="Bueno"
+                                                goodLabel="Fuerte" 
+                                                required="true" 
+                                                onblur="requiredField(this)"
+                                                requiredMessage="Se requiere contraseña" />
+                                </h:panelGroup>
+
+                                <h:outputText value="Repetir contraseña"/>
+                                <h:panelGroup styleClass="md-inputfield">
+                                    <p:password id="psw2" 
+                                                placeholder="Repetir Contraseña" 
+                                                required="true" 
+                                                onblur="requiredField(this)"
+                                                requiredMessage="Repetir Contraseña"/>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:panelGrid>
+
+                        <p:commandButton value="Actualizar" actionListener="#{personalC.modificarCredencial()}"
+                                         update=":formLista:dtTablePers :dlgModificar :growlIdIndep" 
+                                         oncomplete="if(args &amp;&amp; !args.validationFailed)PF('wdlgModificarCredencial').hide();">
+                            <p:confirm  header="Confirmación" message="¿Deseas Modificar?"/>
+                            <p:tooltip trackMouse="true"/>
+                        </p:commandButton>
+
+                        <p:commandButton  value="Cancelar" immediate="true" update="dlgModificarCredencial :dlgModificar" process="@this" oncomplete="PF('wdlgModificarCredencial').hide();">
+                            <p:resetInput target="dlgModificarCredencial" />
+                            <p:resetInput target=":dlgModificar" />
+                        </p:commandButton>
+
+                    </h:form>
+                </p:dialog>
+
+
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

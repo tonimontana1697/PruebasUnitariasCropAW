@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition>
+
+        <p:dialog id="ValleViewDlg" widgetVar="ValleViewDialog" modal="true" resizable="false" appendTo="@(body)" header="#{vistas.ViewValleTitle}">
+            <h:form id="ValleViewForm">
+                <h:panelGroup id="display">
+                    <p:panelGrid columns="2" rendered="#{valleController.selected != null}">
+                        <h:outputText value="#{vistas.ViewValleLabel_idvall}"/>
+                        <h:outputText value="#{valleController.selected.idvall}" title="#{vistas.ViewValleTitle_idvall}"/>
+                        <h:outputText value="#{vistas.ViewValleLabel_nomvall}"/>
+                        <h:outputText value="#{valleController.selected.nomvall}" title="#{vistas.ViewValleTitle_nomvall}"/>
+                        <h:outputText value="#{vistas.ViewValleLabel_estavall}"/>
+                        <h:outputText value="#{valleController.selected.estavall}" title="#{vistas.ViewValleTitle_estavall}"/>
+                        <h:outputText value="#{vistas.ViewValleLabel_idagen}"/>
+                        <h:outputText value="#{valleController.selected.idagen}" title="#{vistas.ViewValleTitle_idagen}"/>
+                    </p:panelGrid>
+                    <p:commandButton value="#{vistas.Close}" onclick="ValleViewDialog.hide()"/>
+                </h:panelGroup>
+            </h:form>
+        </p:dialog>
+
+    </ui:composition>
+</html>
